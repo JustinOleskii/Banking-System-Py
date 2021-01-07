@@ -1,1 +1,0 @@
-{} {} has been registed with Account No. {}
