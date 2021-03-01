@@ -44,7 +44,7 @@ def login():
     username = input("Enter username: ")
     password = input("Enter password: ")
 
-    query = "select * from users"
+    query = "select rowid,username,password from users"
     credentials = []
     cursor.execute(query)
 
@@ -52,10 +52,11 @@ def login():
         credentials.append(x)
     
     for i in range(len(credentials)):
-        if username == credentials[i][2]:
-            if password == credentials[i][3]:
+        if username == credentials[i][1]:
+            if password == credentials[i][2]:
                 print("Successfully logged in!")
-                customer.customerMenu()
+                acc = account.reg(credentials[i][0])
+                customer.customerMenu(acc)
             else:
                 print("Invalid password")
         else:

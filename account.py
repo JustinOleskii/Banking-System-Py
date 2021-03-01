@@ -5,13 +5,25 @@ import utils
 accountLog = open('acLog.txt', 'w')
 
 class reg:
-    def __init__(self):
+    def __init__(self, userID = None):
         self.FirstName = None
         self.LastName = None
         self.cardNo = None
         self.pin = None
         self.balance = 0
-    
+        
+        if userID is not None:
+            cursor, _ = utils.dbConnect()
+            cursor.execute(f"SELECT CardNumber FROM users WHERE rowid = {userID}")
+            self.cardNo = cursor.fetchone()[0]
+            
+            cursor.execute(f"SELECT FirstName,LastName,PIN,Balance FROM cards WHERE CardNumber = '{self.cardNo}';")
+            data = cursor.fetchone()
+            self.FirstName = data[0]
+            self.LastName = data[1]
+            self.pin = data[2]
+            self.balance = data[3]
+        
     def createCard(self):
         firstName = input("Enter first name: ")
         lastName = input("Enter last name: ")
@@ -25,8 +37,9 @@ class reg:
         self.balance = bal
         accountLog.write(f"{firstName} {lastName} has been registed with Account No. {self.cardNo}")
         cursor, connection = utils.dbConnect()
-        querystring = f"INSERT into cards(CardNumber, FirstName, LastName, PIN, Balance) VALUES ({self.cardNo}, '{self.FirstName}', '{self.LastName}', {self.pin}, {self.balance})"
-        cursor.execute(querystring)
+        cursor.execute(f"INSERT into cards(CardNumber, FirstName, LastName, PIN, Balance) VALUES ({self.cardNo}, '{self.FirstName}', '{self.LastName}', {self.pin}, {self.balance})")
+        connection.commit()
+        connection.execute(f"UPDATE users SET CardNumber = '{self.cardNo}' WHERE FirstName = '{self.firstName}' AND LastName = '{self.LastName}';")
         connection.commit()
         print(f"Your card has been created! The details are as follows: \n\nAccount Number: {self.cardNo}\nFirst Name: {self.FirstName}\nLast Name: {self.LastName}\nPIN: {self.pin}\nBalance: ${self.balance}")
         connection.close()
@@ -42,19 +55,17 @@ class reg:
         return cardNo
 
     def depositMoney(self):
-        cardNo = input("Enter your card number: ")
         val = float(input("How much money would you like to deposit: "))
         cursor, connection = utils.dbConnect()
-        querystring = f"UPDATE cards SET Balance = Balance + {val} WHERE CardNumber = {cardNo}"
-        cursor.execute(querystring)
+        cursor.execute(f"UPDATE cards SET Balance = Balance + {val} WHERE CardNumber = '{self.cardNo}'")
         connection.commit()
         print(f"{val} was credited into your account.")
         connection.close()
 
     def transferMoney(self):
-        recv = input("Enter card number to transfer money to: ")
         cursor, connection = utils.dbConnect()
-        cursor.execute('SELECT EXISTS (SELECT number from card WHERE number=?);', (recv))
+        recv = input("Enter card number to transfer money to: ")
+        cursor.execute(f"SELECT COUNT(*) FROM cards WHERE CardNumber = '{recv}';")
         if self.luhnAlgo(recv, 0) is False:
             print("Invalid Card Number!")
         elif recv == self.cardNo:
@@ -62,24 +73,24 @@ class reg:
         elif cursor.fetchone()[0] == 0:
             print("No such card exists!")
         else:
-            cursor.execute(f'SELECT Balance FROM cards WHERE CardNumber={self.cardNo}')
+            cursor.execute(f"SELECT Balance FROM cards WHERE CardNumber='{self.cardNo}'")
             senderBal = cursor.fetchone()[0]
-            cursor.execute(f'SELECT Balance FROM cards WHERE CardnUmber={recv}')
+            cursor.execute(f"SELECT Balance FROM cards WHERE CardNumber='{recv}'")
             receiverBal = cursor.fetchone()[0]
             amount = int(input("Enter how much money you want to transfer: "))
             if amount > senderBal:
                 print('Value is greater than amount in your savings!')
             else:
-                cursor.execute(f'UPDATE cards SET balance={senderBal - amount} WHERE CardNumber={self.cardNo}')
+                cursor.execute(f"UPDATE cards SET balance={senderBal - amount} WHERE CardNumber='{self.cardNo}'")
                 connection.commit()
-                cursor.execute(f'UPDATE cards SET balance={receiverBal + amount} WHERE CardNumber=${recv}')
+                cursor.execute(f"UPDATE cards SET balance={receiverBal + amount} WHERE CardNumber='{recv}'")
                 connection.commit()
                 print("Transfer successful!")
     
     def closeAccount(self):
         cursor, connection = utils.dbConnect()
-        cursor.execute(f'DELETE from cards WHERE CardNumber={self.cardNo}')
-        cursor.execute(f'DELETE from users WHERE CardNumber=${self.cardNo}')
+        cursor.execute(f"DELETE from cards WHERE CardNumber='{self.cardNo}'")
+        cursor.execute(f"DELETE from users WHERE CardNumber='{self.cardNo}'")
         connection.commit()
         print("Account has been closed!")
 
