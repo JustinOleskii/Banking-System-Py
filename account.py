@@ -48,7 +48,7 @@ class reg:
         cursor, connection = utils.dbConnect()
         cursor.execute(f"INSERT into cards(CardNumber, FirstName, LastName, PIN, Balance) VALUES ({self.cardNo}, '{self.FirstName}', '{self.LastName}', {self.pin}, {self.balance})")
         connection.commit()
-        connection.execute(f"UPDATE users SET CardNumber = '{self.cardNo}' WHERE FirstName = '{self.firstName}' AND LastName = '{self.LastName}';")
+        connection.execute(f"UPDATE users SET CardNumber = '{self.cardNo}' WHERE FirstName = '{self.FirstName}' AND LastName = '{self.LastName}';")
         connection.commit()
         print(f"Your card has been created! The details are as follows: \n\nAccount Number: {self.cardNo}\nFirst Name: {self.FirstName}\nLast Name: {self.LastName}\nPIN: {self.pin}\nBalance: ${self.balance}")
         connection.close()
