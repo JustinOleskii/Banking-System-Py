@@ -20,7 +20,7 @@ class reg:
             cursor.execute(f"SELECT FirstName,LastName,PIN,Balance FROM cards WHERE CardNumber = '{self.cardNo}';")
             while True:
                 row = cursor.fetchone()
-                if row === None:
+                if row == None:
                     break
                 self.FirstName = row[0]
                 self.LastName = row[1]
