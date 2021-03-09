@@ -20,7 +20,7 @@ class reg:
             cursor.execute(f"SELECT FirstName,LastName,PIN,Balance FROM cards WHERE CardNumber = '{self.cardNo}';")
             while True:
                 row = cursor.fetchone()
-                if row == None:
+                if row is None:
                     break
                 self.FirstName = row[0]
                 self.LastName = row[1]
@@ -52,7 +52,12 @@ class reg:
     def getBalance(self):
         cursor, _ = utils.dbConnect()
         cursor.execute(f"SELECT Balance FROM cards WHERE CardNumber='{self.cardNo}'")
-        balance = cursor.fetchone()[0]
+        balance = -1
+        while True:
+            row = cursor.fetchone()
+            if row is None:
+                break
+            balance = row[0]
         return balance
 
     def getCard(self):
