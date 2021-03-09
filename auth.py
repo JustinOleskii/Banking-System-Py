@@ -50,15 +50,20 @@ def login():
 
     for x in cursor:
         credentials.append(x)
+
+    loggedIn = False
     
     for i in range(len(credentials)):
         if username == credentials[i][1]:
             if password == credentials[i][2]:
+                loggedIn = True
                 print("Successfully logged in!")
                 acc = account.reg(credentials[i][0])
-                customer.customerMenu(acc)
             else:
                 print("Invalid password")
-        else:
-            print("No such username exists!")
+
+    if loggedIn:
+        customer.customerMenu(acc)
+    else
+        print("No such username exists!")
             
