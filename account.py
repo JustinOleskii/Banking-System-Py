@@ -18,11 +18,14 @@ class reg:
             self.cardNo = cursor.fetchone()[0]
             
             cursor.execute(f"SELECT FirstName,LastName,PIN,Balance FROM cards WHERE CardNumber = '{self.cardNo}';")
-            data = cursor.fetchone()
-            self.FirstName = data[0]
-            self.LastName = data[1]
-            self.pin = data[2]
-            self.balance = data[3]
+            while True:
+                row = cursor.fetchone()
+                if row === None:
+                    break
+                self.FirstName = row[0]
+                self.LastName = row[1]
+                self.pin = row[2]
+                self.balance = row[3]
         
     def createCard(self):
         firstName = input("Enter first name: ")
@@ -35,7 +38,9 @@ class reg:
         self.cardNo = '400000' + "".join([str(random.randrange(10)) for i in range(9)])
         self.cardNo = self.luhnAlgo(self.cardNo, 1)
         self.balance = bal
+        
         accountLog.write(f"{firstName} {lastName} has been registed with Account No. {self.cardNo}")
+        
         cursor, connection = utils.dbConnect()
         cursor.execute(f"INSERT into cards(CardNumber, FirstName, LastName, PIN, Balance) VALUES ({self.cardNo}, '{self.FirstName}', '{self.LastName}', {self.pin}, {self.balance})")
         connection.commit()
