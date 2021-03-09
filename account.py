@@ -51,7 +51,7 @@ class reg:
 
     def getBalance(self):
         cursor, _ = utils.dbConnect()
-        cursor.execute(f'SELECT Balance FROM cards WHERE CardNumber={self.cardNo}')
+        cursor.execute(f"SELECT Balance FROM cards WHERE CardNumber='{self.cardNo}'")
         balance = cursor.fetchone()[0]
         return balance
 
