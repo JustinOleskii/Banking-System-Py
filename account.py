@@ -15,7 +15,11 @@ class reg:
         if userID is not None:
             cursor, _ = utils.dbConnect()
             cursor.execute(f"SELECT CardNumber FROM users WHERE rowid = {userID}")
-            self.cardNo = cursor.fetchone()[0]
+            while True:
+                row = cursor.fetchone()
+                if row is None:
+                    break
+                self.cardNo = row[0]
             
             cursor.execute(f"SELECT FirstName,LastName,PIN,Balance FROM cards WHERE CardNumber = '{self.cardNo}';")
             while True:
