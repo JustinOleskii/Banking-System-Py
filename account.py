@@ -2,8 +2,6 @@ import random
 import mysql.connector
 import utils
 
-accountLog = open('acLog.txt', 'w')
-
 class reg:
     def __init__(self, userID = None):
         self.FirstName = None
@@ -14,13 +12,12 @@ class reg:
         
         if userID is not None:
             cursor, _ = utils.dbConnect()
-            cursor.execute(f"SELECT CardNumber FROM users WHERE rowid = {userID}")
+            cursor.execute(f"SELECT CardNumber FROM cards WHERE rowid = {userID}")
             while True:
                 row = cursor.fetchone()
                 if row is None:
                     break
                 self.cardNo = row[0]
-            
             cursor.execute(f"SELECT FirstName,LastName,PIN,Balance FROM cards WHERE CardNumber = '{self.cardNo}';")
             while True:
                 row = cursor.fetchone()
@@ -42,9 +39,7 @@ class reg:
         self.cardNo = '400000' + "".join([str(random.randrange(10)) for i in range(9)])
         self.cardNo = self.luhnAlgo(self.cardNo, 1)
         self.balance = bal
-        
-        accountLog.write(f"{firstName} {lastName} has been registed with Account No. {self.cardNo}")
-        
+                
         cursor, connection = utils.dbConnect()
         cursor.execute(f"INSERT into cards(CardNumber, FirstName, LastName, PIN, Balance) VALUES ({self.cardNo}, '{self.FirstName}', '{self.LastName}', {self.pin}, {self.balance})")
         connection.commit()
@@ -104,7 +99,7 @@ class reg:
     def closeAccount(self):
         cursor, connection = utils.dbConnect()
         cursor.execute(f"DELETE from cards WHERE CardNumber='{self.cardNo}'")
-        cursor.execute(f"DELETE from users WHERE CardNumber='{self.cardNo}'")
+        cursor.execute(f"DELETE from users WHERE FirstName='{self.FirstName}' and PIN={self.pin}")
         connection.commit()
         print("Account has been closed!")
 
@@ -127,4 +122,3 @@ class reg:
             return (sumNo + int(cardNum[-1])) % 10 == 0
         elif mode == 1:
             return "".join(map(str, init)) + str((1000 - sumNo) % 10)
-    

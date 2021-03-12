@@ -6,8 +6,7 @@ def customerMenu(account):
 
     while choice != 0:
         utils.clear()
-        print("\n1. View Balance\n2. Deposit Money\n3. Transfer Money\n4. Close Account\n0. Logout\n\n")
-        print('Card Number:', account.getCard())
+        print(f"1. Deposit Money\n2. Transfer Money\n3. Close Account\n0. Logout\n\n\nCard Number: {account.getCard()}\nBalance: {account.getBalance()}")
         print("Enter choice: ", end=" ")
 
         try:
@@ -18,16 +17,14 @@ def customerMenu(account):
             continue
 
         if choice == 1:
-            balance = account.getBalance()
-            print(f"Your current balance is: {balance}")
-        elif choice == 2:
             print("Deposit money")
             account.depositMoney()
-        elif choice == 3:
+        elif choice == 2:
             account.transferMoney()
-        elif choice == 4:
+        elif choice == 3:
             print("Close Account")
             account.closeAccount()
+            pass
         elif choice == 0:
             print("Logout")
             pass

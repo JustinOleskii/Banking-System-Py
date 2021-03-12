@@ -1,5 +1,4 @@
 # Import Modules
-import pyfiglet
 import sys
 import auth as authFunctions
 import utils
@@ -7,12 +6,18 @@ import utils
 def main():
     choice = 1
 
-    ascii_banner = pyfiglet.figlet_format("Bank  of  India")
+    ascii_banner = '''
+██████╗  █████╗ ███╗   ██╗██╗  ██╗     ██████╗ ███████╗    ██╗███╗   ██╗██████╗ ██╗ █████╗ 
+██╔══██╗██╔══██╗████╗  ██║██║ ██╔╝    ██╔═══██╗██╔════╝    ██║████╗  ██║██╔══██╗██║██╔══██╗
+██████╔╝███████║██╔██╗ ██║█████╔╝     ██║   ██║█████╗      ██║██╔██╗ ██║██║  ██║██║███████║
+██╔══██╗██╔══██║██║╚██╗██║██╔═██╗     ██║   ██║██╔══╝      ██║██║╚██╗██║██║  ██║██║██╔══██║
+██████╔╝██║  ██║██║ ╚████║██║  ██╗    ╚██████╔╝██║         ██║██║ ╚████║██████╔╝██║██║  ██║
+╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝     ╚═════╝ ╚═╝         ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝╚═╝  ╚═╝
+                                                                                           '''
     
     while choice != 0:
-        utils.clear()
         print(ascii_banner)
-        print("\nWelcome to the Bank of India Portal\n\n1. First Time User\n2. Returning User\n3. Administrator Login\n0. Exit\n\n")
+        print("\nWelcome to the Bank of India Portal\n\n1. First Time User\n2. Returning User\n0. Exit\n\n")
         print("Enter Choice: ", end="")
 
         try:
@@ -28,12 +33,9 @@ def main():
         elif choice == 2:
             print("Signing in")
             authFunctions.login()
-        elif choice == 3:
-            print("Admin Login")
         elif choice == 0:
             sys.exit()
         else:
             print("Invalid Choice!")
             utils.clear()
-        
 main()
